@@ -1,41 +1,67 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fullstack Todo List (Next.js + NestJS + Prisma)
 
-## Getting Started
+Small fullstack app to register/login and manage user-scoped tasks. Frontend is **Next.js (TypeScript + Tailwind)**. Backend is **NestJS (TypeScript)** with **JWT auth**, **Prisma**, and **PostgreSQL**.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend:** Next.js (App Router), TypeScript, Tailwind
+- **Backend:** NestJS, JWT (passport-jwt), Prisma
+- **DB:** PostgreSQL (Docker)
+- **Tests (backend):** Jest with Prisma/JWT mocks
+- **CI:** GitHub Actions (build front + run backend unit tests)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quick start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1) Backend (API)
 
-## Learn More
+Create `api/.env` from the example:
 
-To learn more about Next.js, take a look at the following resources:
+bash
+cp .env.example api/.env
+Fill values — for local dev you can start with:
+PORT=
+JWT_SECRET=
+DATABASE_URL=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run Postgres via Docker (see Docker section below), then:
+cd api
+npm ci
+npx prisma migrate dev
+npm run start:dev
+API at http://localhost:3001
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tests (backend)
 
-## Deploy on Vercel
+Unit tests use mocks (no database required):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+cd api
+npm test
+or watch:
+npm run test:watch
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# todo-list-with-login
-Development for technical interview for NextJS/NestJS fullstack position
->>>>>>> e27692d9b60d799d36a4a7e7404239c684860bd3
+## Docker (database only)
+
+Minimal docker-compose.yml for Postgres (place at repo root):
+
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: todo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+volumes:
+  dbdata:
+
+# What I researched vs. what I knew
+
+I coded the Next.js forms/pages and the Nest structure as I normally do. For Prisma specifics (client generation, DATABASE_URL setup) and Nest testing with provider overrides/mocks, I researched quickly (ChatGPT + official docs) to set up lightweight unit tests for Auth and Tasks without hitting a real DB.
