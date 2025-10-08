@@ -7,6 +7,7 @@ import { getToken } from "../../lib/auth";
 import type { Task, TaskCreateDTO, TaskUpdateDTO } from "../../types/task";
 import TaskForm from "../../components/Forms/TaskForm";
 import TaskList from "@/components/TaskList";
+import LogoutButton from "@/components/ui/LogoutButton";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -60,17 +61,12 @@ export default function TasksPage() {
   return (
     <div className="min-h-dvh bg-gray-800">
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Tasks</h1>
-          <button
-            onClick={() => { localStorage.removeItem("token"); window.location.href = "/login"; }}
-            className="rounded-md bg-slate-700 px-3 py-2 text-white text-sm hover:bg-slate-800"
-          >
-            Logout
-          </button>
-        </header>
 
         <section className="mb-6 rounded-xl bg-slate-200 p-6 shadow">
+          <header className="mb-6 flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-indigo-700">Tasks</h1>
+            <LogoutButton />
+          </header>
           <TaskForm onSave={handleCreate} />
         </section>
 
