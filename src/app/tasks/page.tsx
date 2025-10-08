@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "../../lib/api";
+import { getToken } from "../../lib/auth";
 import type { Task, TaskCreateDTO, TaskUpdateDTO } from "../../types/task";
 import TaskForm from "../../components/Forms/TaskForm";
-import TaskList from "../../components/TaskList";
+import TaskList from "@/components/TaskList";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const router = useRouter();
 
   async function load() {
     setErr(null);
@@ -23,7 +26,14 @@ export default function TasksPage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    const t = getToken();
+    if (!t) {
+      router.push("/login");
+      return;
+    }
+    load();
+  }, []);
 
   async function handleCreate(payload: TaskCreateDTO) {
     setErr(null);
@@ -60,12 +70,10 @@ export default function TasksPage() {
           </button>
         </header>
 
-        {/* Form de criação */}
         <section className="mb-6 rounded-xl bg-slate-200 p-6 shadow">
           <TaskForm onSave={handleCreate} />
         </section>
 
-        {/* Lista */}
         <section className="rounded-xl bg-slate-200 p-6 shadow">
           {err && <p className="mb-3 text-sm text-red-600">{err}</p>}
           {loading ? (

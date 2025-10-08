@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import { useState, FormEvent } from "react";
+import TextField from "../ui/TextField";
 import { api } from "../../lib/api";
 import { saveToken } from "../../lib/auth";
-import type { AuthResponse } from "../../types/task";
-import TextField from "../ui/TextField";
 import { useRouter } from "next/navigation";
-
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -18,16 +16,20 @@ export default function LoginForm() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setErr(null);
+    if (!email.trim()) return setErr("Email is required");
+    if (!password.trim()) return setErr("Password is required");
+
     setLoading(true);
     try {
-      const data = await api<AuthResponse>("/auth/login", {
+      const data = await api<{ accessToken: string }>("/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password: password.trim() }),
       });
+
       saveToken(data.accessToken);
       router.push("/tasks");
-    } catch (error: any) {
-      setErr(error?.message || "Login Failed");
+    } catch (e: any) {
+      setErr(e?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -35,32 +37,11 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      <TextField
-        id="email"
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Insert your email"
-        autoComplete="email"
-      />
-      <TextField
-        id="password"
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Insert your password"
-        autoComplete="current-password"
-      />
+      <TextField id="email" label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <TextField id="password" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
       {err && <p className="text-sm text-red-600">{err}</p>}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-md bg-indigo-600 px-3 py-4 text-white font-medium hover:bg-indigo-700 disabled:opacity-60 cursor-pointer"
-      >
-        {loading ? "Loading..." : "Access To Do App"}
+      <button disabled={loading} className="w-full rounded-md bg-indigo-600 px-3 py-2 text-white">
+        {loading ? "Signing in..." : "Login"}
       </button>
     </form>
   );
