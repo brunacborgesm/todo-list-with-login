@@ -24,15 +24,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className='bg-gray-800 min-h-screen'
-      >
-        <main className="w-full max-w-3xl px-4">
-          <section className="bg-slate-200 mx-auto p-6 min-h-[580px] rounded-xl flex flex-col justify-center">
-            {children}
-          </section>
-
-        </main>
+      <body className="min-h-screen bg-gray-800">
+        {children}
       </body>
     </html>
   );
