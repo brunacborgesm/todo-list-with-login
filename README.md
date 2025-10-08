@@ -1,6 +1,6 @@
 # Fullstack Todo List (Next.js + NestJS + Prisma)
 
-Small fullstack app to register/login and manage user-scoped tasks. Frontend is **Next.js (TypeScript + Tailwind)**. Backend is **NestJS (TypeScript)** with **JWT auth**, **Prisma**, and **PostgreSQL**.
+Fullstack app to register/login and manage user-scoped tasks. Frontend is **Next.js (TypeScript + Tailwind)**. Backend is **NestJS (TypeScript)** with **JWT auth**, **Prisma**, and **PostgreSQL**.
 
 ## Stack
 
