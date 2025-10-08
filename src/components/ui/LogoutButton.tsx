@@ -7,7 +7,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={() => { logout(); router.push("/login"); }}
-      className="rounded-md bg-indigo-700 px-3 py-2 text-white text-sm hover:bg-indigo-600"
+      className="rounded-md bg-indigo-700 px-3 py-2 text-white text-sm hover:bg-indigo-600 cursor-pointer" 
     >
       Logout
     </button>

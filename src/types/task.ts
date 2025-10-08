@@ -23,7 +23,7 @@ export interface AuthResponse {
   accessToken: string;
 }
 export const TASK_STATUS_OPTIONS: Array<{ value: TaskStatus; label: string }> = [
-  { value: "PENDING",     label: "Pendente" },
-  { value: "IN_PROGRESS", label: "Em andamento" },
-  { value: "DONE",        label: "Concluída" },
+  { value: "PENDING",     label: "Pending" },
+  { value: "IN_PROGRESS", label: "In Progress" },
+  { value: "DONE",        label: "Done" },
 ];

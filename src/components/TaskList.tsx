@@ -19,13 +19,13 @@ export default function TaskList({ tasks, onToggle, onDelete }: Props) {
           </div>
           <div className="flex gap-2">
             <button
-              className="rounded-md bg-emerald-600 px-3 py-2 text-white text-sm hover:bg-emerald-700"
+              className="rounded-md bg-emerald-600 px-3 py-2 text-white text-sm hover:bg-emerald-700 cursor-pointer"
               onClick={() => onToggle(t)}
             >
               {t.status === "DONE" ? "Mark pending" : "Mark done"}
             </button>
             <button
-              className="rounded-md bg-rose-600 px-3 py-2 text-white text-sm hover:bg-rose-700"
+              className=" cursor-pointer rounded-md bg-rose-600 px-3 py-2 text-white text-sm hover:bg-rose-700"
               onClick={() => onDelete(t)}
             >
               Delete
