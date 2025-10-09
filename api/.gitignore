@@ -62,6 +62,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .env
 node_modules/
 dist/
-.prisma/
 prisma/dev.db
+prisma/*.db
 .DS_Store

@@ -2,53 +2,82 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-and-test:
+  api:
+    name: API (Nest + Prisma)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20]
-
+    defaults:
+      run:
+        working-directory: api
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          node-version: 20
+          cache: npm
+          cache-dependency-path: api/package-lock.json
 
-
-
-
-      - name: Install frontend deps
+      - name: Install deps
         run: npm ci
 
-      - name: Build frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: http://localhost:3001
-
-
-
-      - name: Install backend deps
-        working-directory: api
-        run: npm ci
-
-      - name: Generate Prisma client
-        working-directory: api
+      - name: Prisma Generate
         run: npx prisma generate
 
-      - name: Run unit tests (backend)
-        working-directory: api
-        run: npm test -- --ci
+      - name: Build
+        run: npm run build
 
-      - name: Build backend
-        working-directory: api
+      - name: Test (optional)
+        run: npm test --if-present
+Postgres no CI (tests/migrations):
+    #services:
+    #  postgres:
+    #    image: postgres:16
+    #    env:
+    #      POSTGRES_DB: todo_db
+    #      POSTGRES_USER: postgres
+    #      POSTGRES_PASSWORD: postgres
+    #    ports: ['5432:5432']
+    #    options: >-
+    #      --health-cmd="pg_isready -U postgres -d todo_db"
+    #      --health-interval=10s
+    #      --health-timeout=5s
+    #      --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todo_db?schema=public
+      JWT_SECRET: test-secret
+      NODE_ENV: test
+      PORT: 3001
+
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          NEXT_PUBLIC_API_URL: http://localhost:3001
         run: npm run build

@@ -10,8 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# Logs & testing
 /coverage
+*.log
 
 # next.js
 /.next/
@@ -32,6 +33,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env.local
+.env*
+!.env.example
+api/.env
+api/.env.local
 
 # vercel
 .vercel
@@ -39,3 +44,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
