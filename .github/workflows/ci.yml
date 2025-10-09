@@ -1,83 +1,52 @@
 name: CI
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on: [push, pull_request]
 
 jobs:
   api:
-    name: API (Nest + Prisma)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: api
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: api/package-lock.json
 
-      - name: Install deps
+      - name: Install (API)
         run: npm ci
 
-      - name: Prisma Generate
+      - name: Prisma generate (API)
         run: npx prisma generate
 
-      - name: Build
+      - name: Build (API)
         run: npm run build
-
-      - name: Test (optional)
-        run: npm test --if-present
-Postgres no CI (tests/migrations):
-    #services:
-    #  postgres:
-    #    image: postgres:16
-    #    env:
-    #      POSTGRES_DB: todo_db
-    #      POSTGRES_USER: postgres
-    #      POSTGRES_PASSWORD: postgres
-    #    ports: ['5432:5432']
-    #    options: >-
-    #      --health-cmd="pg_isready -U postgres -d todo_db"
-    #      --health-interval=10s
-    #      --health-timeout=5s
-    #      --health-retries=5
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todo_db?schema=public
-      JWT_SECRET: test-secret
-      NODE_ENV: test
-      PORT: 3001
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/todo_db?schema=public"
+          JWT_SECRET: "test-secret"
+          NODE_ENV: "test"
+          PORT: "3001"
 
   frontend:
-    name: Frontend (Next.js)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Install deps
+      - name: Install (Front)
         run: npm ci
 
-      - name: Build
+      - name: Build (Front)
+        run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
-          NEXT_PUBLIC_API_URL: http://localhost:3001
-        run: npm run build
+          NEXT_PUBLIC_API_URL: "http://localhost:3001"
