@@ -19,8 +19,8 @@ export default function TaskForm({ onSave }: { onSave: (payload: TaskCreateDTO) 
     try {
       await onSave({ title: title.trim(), description: description.trim() || undefined, status });
       setTitle(""); setDescription(""); setStatus("PENDING");
-    } catch (e: any) {
-      setErr(e?.message || "Failed to create task");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Failed to create task");
     } finally {
       setLoading(false);
     }

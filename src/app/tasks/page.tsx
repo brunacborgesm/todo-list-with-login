@@ -20,8 +20,8 @@ export default function TasksPage() {
     try {
       const data = await api<Task[]>("/tasks", { method: "GET" });
       setTasks(data);
-    } catch (e: any) {
-      setErr(e?.message || "Failed to load tasks");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Failed to load tasks");
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,15 @@ export default function TasksPage() {
 
   async function handleCreate(payload: TaskCreateDTO) {
     setErr(null);
-    const created = await api<Task>("/tasks", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-    setTasks((prev) => [created, ...prev]);
+    try {
+      const created = await api<Task>("/tasks", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      setTasks((prev) => [created, ...prev]);
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Failed to create task");
+    }
   }
 
   async function handleUpdate(id: string, patch: TaskUpdateDTO) {

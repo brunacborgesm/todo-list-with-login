@@ -41,8 +41,8 @@ export default function RegisterForm() {
 
       saveToken(login.accessToken);
       router.push("/tasks");
-    } catch (e: any) {
-      setErr(e?.message || "Registration failed");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Registration failed");
     } finally {
       setLoading(false);
     }

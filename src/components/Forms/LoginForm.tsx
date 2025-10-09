@@ -25,11 +25,10 @@ export default function LoginForm() {
         method: "POST",
         body: JSON.stringify({ email: email.trim(), password: password.trim() }),
       });
-
       saveToken(data.accessToken);
       router.push("/tasks");
-    } catch (e: any) {
-      setErr(e?.message || "Login failed");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Login failed");
     } finally {
       setLoading(false);
     }
